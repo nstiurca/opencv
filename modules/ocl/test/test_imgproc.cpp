@@ -299,7 +299,8 @@ typedef ImgprocTestBase Integral;
 
 OCL_TEST_P(Integral, Mat1)
 {
-    for (int j = 0; j < LOOP_TIMES; j++)
+//    for (int j = 0; j < LOOP_TIMES; j++)
+    while(true)
     {
         random_roi();
 
