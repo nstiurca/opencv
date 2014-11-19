@@ -66,8 +66,6 @@ kernel void simple_integral_rows_D4(__global uchar *src, __global int *sum, int 
 {
     const int gid = get_global_id(0);
 
-//    printf("%i", gid);
-
     if(gid < rows) {
         src_offset /= sizeof(*src);
         src_step   /= sizeof(*src);
@@ -76,20 +74,12 @@ kernel void simple_integral_rows_D4(__global uchar *src, __global int *sum, int 
         src += gid*src_step + src_offset;
         sum += gid*sum_step;
 
-        /*
         int s = 0;
         for(int i=0; i<cols; ++i) {
             sum[i] = s;
             s += src[i];
         }
         sum[cols] = s;
-        */
-        sum[0] = 0;
-        int s = 0;
-        for(int i=0; i<cols; ++i) {
-            s += src[i];
-            sum[i+1] = s;
-        }
     }
 }
 
