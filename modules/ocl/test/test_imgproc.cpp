@@ -307,6 +307,10 @@ OCL_TEST_P(Integral, Mat1)
         ocl::integral(gsrc_roi, gdst_roi);
         integral(src_roi, dst_roi);
 
+        std::cout << "src_roi:" << std::endl << src_roi << std::endl;
+        std::cout << "expected: " << std::endl << dst_roi << std::endl;
+        std::cout << "actual: " << std::endl << (Mat)gdst_roi << std::endl;
+
         Near();
     }
 }

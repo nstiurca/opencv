@@ -978,8 +978,10 @@ namespace cv
             args.push_back( make_pair( sizeof(cl_int) , (void *)&src.cols ));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&src.step ));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&t_sum.step));
-            size_t gt[3] = {(h+255)/256, 1, 1}, lt[3] = {256,1,1};
-//            size_t gt[3] = {h, 1, 1}, lt[3] = {256,1,1};
+//            size_t gt[3] = {(h+255)/256, 1, 1}, lt[3] = {256,1,1};
+            size_t gt[3] = {h, 1, 1};
+            size_t *lt = NULL;
+//            size_t lt[3] = {256,1,1};
             openCLExecuteKernel(src.clCxt, &imgproc_integral, "simple_integral_rows", gt, lt, args, -1, depth);
 
             cl_command_queue q = getClCommandQueue(src.clCxt);
@@ -994,8 +996,8 @@ namespace cv
             args.push_back( make_pair( sizeof(cl_int) , (void *)&t_sum.step ));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&sum.step));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&sum.offset));
-            gt[0] = (w+1+255)/256;
-//            gt[0] = w+1;
+//            gt[0] = (w+1+255)/256;
+            gt[0] = w+1;
             openCLExecuteKernel(src.clCxt, &imgproc_integral, "simple_integral_cols", gt, lt, args, -1, depth);
 
 //            clFlush((cl_command_queue)src.clCxt->getOpenCLCommandQueuePtr());
