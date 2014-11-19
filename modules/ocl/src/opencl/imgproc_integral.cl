@@ -98,7 +98,7 @@ kernel void simple_integral_cols_D4(__global int *src, __global int *sum, int ro
 {
     const int gid = get_global_id(0);
 
-    if(gid < cols) {
+    if(gid <= cols) {
         sum_offset /= sizeof(*sum);
         src_step   /= sizeof(*src);
         sum_step   /= sizeof(*sum);
