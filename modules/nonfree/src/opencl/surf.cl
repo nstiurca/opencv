@@ -358,7 +358,8 @@ void icvFindMaximaInLayer_withmask(
     int mask_step
 )
 {
-    volatile __local  float N9[768]; // threads.x * threads.y * 3
+    volatile __local  float N9[768/2]; // threads.x * threads.y * 3
+    //volatile __local  float N9[get_num_groups(0) * get_num_groups(1) * 3];
 
     det_step   /= sizeof(*det);
     trace_step /= sizeof(*trace);
@@ -484,7 +485,8 @@ void icvFindMaximaInLayer(
     float c_hessianThreshold
 )
 {
-    volatile __local  float N9[768]; // threads.x * threads.y * 3
+    volatile __local  float N9[768/2]; // threads.x * threads.y * 3
+    //volatile __local  float N9[get_num_groups(0) * get_num_groups(1) * 3];
 
     det_step   /= sizeof(float);
     trace_step /= sizeof(float);
