@@ -133,7 +133,7 @@ PARAM_TEST_CASE(SURF, HessianThreshold, Octaves, OctaveLayers, Extended, Upright
     }
 };
 
-TEST_P(SURF, DISABLED_Detector)
+TEST_P(SURF, Detector2)
 {
     cv::Mat image  = cv::imread(string(cvtest::TS::ptr()->get_data_path()) + "shared/fruits.png", cv::IMREAD_GRAYSCALE);
     ASSERT_FALSE(image.empty());
@@ -166,7 +166,7 @@ TEST_P(SURF, DISABLED_Detector)
     EXPECT_GT(matchedRatio, 0.99);
 }
 
-TEST_P(SURF, DISABLED_Descriptor)
+TEST_P(SURF, Descriptor2)
 {
     cv::Mat image  = cv::imread(string(cvtest::TS::ptr()->get_data_path()) + "shared/fruits.png", cv::IMREAD_GRAYSCALE);
     ASSERT_FALSE(image.empty());
