@@ -627,7 +627,7 @@ void SURF_OCL_Invoker::icvFindMaximaInLayer_gpu(const oclMat &det, const oclMat 
         }
         args.push_back( std::make_pair( sizeof(cl_mem), (void *)&surf_.maskSum.step));
     }
-    size_t localThreads[3]  = {16, 16, 1};
+    size_t localThreads[3]  = {16, 8, 1};
     size_t globalThreads[3] = {divUp(layer_cols - 2 * min_margin, localThreads[0] - 2) *localThreads[0],
                                divUp(layer_rows - 2 * min_margin, localThreads[1] - 2) *nLayers *localThreads[1],
                                1
