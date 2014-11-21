@@ -172,6 +172,11 @@ std::wstring GetTempFileNameWinRT(std::wstring prefix)
 # include <android/log.h>
 #endif
 
+#ifdef __GNUC__
+#include <execinfo.h>
+#define BT_ON_EXCEPT
+#endif
+
 namespace cv
 {
 
@@ -196,6 +201,24 @@ void Exception::formatMessage()
         msg = format("%s:%d: error: (%d) %s in function %s\n", file.c_str(), line, code, err.c_str(), func.c_str());
     else
         msg = format("%s:%d: error: (%d) %s\n", file.c_str(), line, code, err.c_str());
+
+#ifdef BT_ON_EXCEPT
+    // get the backtrace
+    void *buffer[20];
+    int size = backtrace(buffer, 20);
+    // decode backtrace
+    char ** symbols = backtrace_symbols(buffer, size);
+    // add backtrace (if it exists) to msg
+    if(symbols) {
+        std::stringstream ss(msg);
+        for(int i=2; i<size; ++i) {
+            ss << std::endl << symbols[i];
+        }
+        msg = ss.str();
+    } else {
+        msg += "\nNo stacktrace available";
+    }
+#endif
 }
 
 struct HWFeatures
