@@ -344,10 +344,10 @@ void openCLVerifyKernel(const Context *ctx, cl_kernel kernel, size_t *localThrea
     openCLSafeCall(clGetKernelWorkGroupInfo(kernel, getClDeviceID(ctx),
                                             CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), &kernelWorkGroupSize, 0));
     fprintf(stderr, "%zu %zu %zu\t%zu\n", localThreads[0], localThreads[1], localThreads[2], kernelWorkGroupSize);
-    size_t deviceLocalMemSize;
+    cl_ulong deviceLocalMemSize;
     openCLSafeCall(clGetDeviceInfo(getClDeviceID(ctx),
-                                            CL_DEVICE_LOCAL_MEM_SIZE, sizeof(size_t), &deviceLocalMemSize, 0));
-    fprintf(stderr, "device local mem size: %zu\n", deviceLocalMemSize);
+                                            CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &deviceLocalMemSize, 0));
+    fprintf(stderr, "device local mem size: %llu\n", deviceLocalMemSize);
     CV_Assert( localThreads[0] <= ctx->getDeviceInfo().maxWorkItemSizes[0] );
     CV_Assert( localThreads[1] <= ctx->getDeviceInfo().maxWorkItemSizes[1] );
     CV_Assert( localThreads[2] <= ctx->getDeviceInfo().maxWorkItemSizes[2] );
