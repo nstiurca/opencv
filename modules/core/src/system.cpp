@@ -210,11 +210,13 @@ void Exception::formatMessage()
     char ** symbols = backtrace_symbols(buffer, size);
     // add backtrace (if it exists) to msg
     if(symbols) {
-        std::stringstream ss(msg);
+        std::stringstream ss;
+        ss << "Stack trace:";
         for(int i=2; i<size; ++i) {
             ss << std::endl << symbols[i];
         }
-        msg = ss.str();
+        free(symbols);
+        msg += ss.str();
     } else {
         msg += "\nNo stacktrace available";
     }
