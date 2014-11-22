@@ -48,6 +48,7 @@
 #include "precomp.hpp"
 #include <iomanip>
 #include <fstream>
+#include <inttypes.h> /* For PRIu64 */
 #include "cl_programcache.hpp"
 
 //#define PRINT_KERNEL_RUN_TIME
@@ -349,7 +350,8 @@ void openCLVerifyKernel(const Context *ctx, cl_kernel kernel, size_t *localThrea
     cl_ulong deviceLocalMemSize;
     openCLSafeCall(clGetDeviceInfo(getClDeviceID(ctx), CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &deviceLocalMemSize, 0));
     fprintf(stderr, "%zu %zu %zu\tmax threads: %zu\n", localThreads[0], localThreads[1], localThreads[2], kernelWorkGroupSize);
-    fprintf(stderr, "device local mem size: %llu\tkernel local mem: %llu\n", deviceLocalMemSize, kernelLocalMemory);
+    fprintf(stderr, "device local mem size: %"PRIu64"\tkernel local mem: %"PRIu64"\n",
+            deviceLocalMemSize, kernelLocalMemory);
 
     CV_Assert( localThreads[0] <= ctx->getDeviceInfo().maxWorkItemSizes[0] );
     CV_Assert( localThreads[1] <= ctx->getDeviceInfo().maxWorkItemSizes[1] );
