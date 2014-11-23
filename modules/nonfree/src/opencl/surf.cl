@@ -830,7 +830,7 @@ void reduce_32_sum(volatile __local  float * data, volatile float* partial_reduc
 #undef op
 }
 
-__kernel __attribute__((reqd_work_group_size(ORI_LOCAL_SIZE, 1, 1)))
+__kernel
 void icvCalcOrientation(
     IMAGE_INT32 sumTex,
     __global float * keypoints,
@@ -847,24 +847,16 @@ void icvCalcOrientation(
     __global float* featureSize = keypoints + SIZE_ROW * keypoints_step;
     __global float* featureDir  = keypoints + ANGLE_ROW * keypoints_step;
 
-#if ORI_SAMPLES >= ORI_RESPONSE_ARRAY_SIZE
-#define BUF_SZ ORI_SAMPLES
-#else
-#define BUF_SZ ORI_RESPONSE_ARRAY_SZ
-#endif
-    __local float b_x[BUF_SZ];
-    __local float b_y[BUF_SZ];
-    __local float b_a[BUF_SZ];
 
-    __local  float *s_X = b_x;
-    __local  float *s_Y = b_y;
-    __local  float *s_angle = b_a;
+    __local  float s_X[ORI_SAMPLES];
+    __local  float s_Y[ORI_SAMPLES];
+    __local  float s_angle[ORI_SAMPLES];
 
     // Need to allocate enough to make the reduction work without accessing
     // past the end of the array.
-    __local  float *s_sumx = b_x;
-    __local  float *s_sumy = b_y;
-    __local  float *s_mod  = b_a;
+    __local  float s_sumx[ORI_RESPONSE_ARRAY_SIZE];
+    __local  float s_sumy[ORI_RESPONSE_ARRAY_SIZE];
+    __local  float s_mod[ORI_RESPONSE_ARRAY_SIZE];
 
     /* The sampling intervals and wavelet sized for selecting an orientation
     and building the keypoint descriptor are defined relative to 's' */
