@@ -997,6 +997,144 @@ void icvCalcOrientation(
 }
 
 __kernel
+void icvCalcOrientation_simple(
+    IMAGE_INT32 sumTex,
+    __global float * keypoints,
+    int keypoints_step,
+    int c_img_rows,
+    int c_img_cols,
+    int sum_step
+)
+{
+    keypoints_step /= sizeof(*keypoints);
+    sum_step       /= sizeof(uint);
+    __global float* featureX    = keypoints + X_ROW * keypoints_step;
+    __global float* featureY    = keypoints + Y_ROW * keypoints_step;
+    __global float* featureSize = keypoints + SIZE_ROW * keypoints_step;
+    __global float* featureDir  = keypoints + ANGLE_ROW * keypoints_step;
+
+
+    // samples of haar sum and orientation
+    float s_X[ORI_SAMPLES];
+    float s_Y[ORI_SAMPLES];
+    float s_angle[ORI_SAMPLES];
+
+    // histograms of samples within ORI_WIN of each sample
+    float s_sumx[ORI_LOCAL_SIZE] = {};
+    float s_sumy[ORI_LOCAL_SIZE] = {};
+    float s_mod[ORI_LOCAL_SIZE]  = {};
+
+    // The sampling intervals and wavelet sized for selecting an orientation
+    // and building the keypoint descriptor are defined relative to 's'
+    const float s = featureSize[get_global_id(0)] * 1.2f / 9.0f;
+
+
+    // To find the dominant orientation, the gradients in x and y are
+    // sampled in a circle of radius 6s using wavelets of size 4s.
+    // We ensure the gradient wavelet size is even to ensure the
+    // wavelet pattern is balanced and symmetric around its center
+    const int grad_wav_size = 2 * round(2.0f * s);
+
+    // check when grad_wav_size is too big
+    if ((c_img_rows + 1) < grad_wav_size || (c_img_cols + 1) < grad_wav_size)
+        return;
+
+    float ratio = (float)grad_wav_size / 4;
+
+    int r2 = round(ratio * 2.0);
+    int r4 = round(ratio * 4.0);
+    for (int i = 0; i < ORI_SAMPLES; i += 1 )
+    {
+        float X = 0.0f, Y = 0.0f, angle = 0.0f;
+        const float margin = (float)(grad_wav_size - 1) / 2.0f;
+        const int x = round(featureX[get_global_id(0)] + c_aptX[i] * s - margin);
+        const int y = round(featureY[get_global_id(0)] + c_aptY[i] * s - margin);
+
+        if (y >= 0 && y < (c_img_rows + 1) - grad_wav_size &&
+            x >= 0 && x < (c_img_cols + 1) - grad_wav_size)
+        {
+
+            float apt = c_aptW[i];
+
+            // Compute the haar sum without fetching duplicate pixels.
+            float t00 = read_sumTex( sumTex, sampler, (int2)(x, y), c_img_rows, c_img_cols, sum_step);
+            float t02 = read_sumTex( sumTex, sampler, (int2)(x, y + r2), c_img_rows, c_img_cols, sum_step);
+            float t04 = read_sumTex( sumTex, sampler, (int2)(x, y + r4), c_img_rows, c_img_cols, sum_step);
+            float t20 = read_sumTex( sumTex, sampler, (int2)(x + r2, y), c_img_rows, c_img_cols, sum_step);
+            float t24 = read_sumTex( sumTex, sampler, (int2)(x + r2, y + r4), c_img_rows, c_img_cols, sum_step);
+            float t40 = read_sumTex( sumTex, sampler, (int2)(x + r4, y), c_img_rows, c_img_cols, sum_step);
+            float t42 = read_sumTex( sumTex, sampler, (int2)(x + r4, y + r2), c_img_rows, c_img_cols, sum_step);
+            float t44 = read_sumTex( sumTex, sampler, (int2)(x + r4, y + r4), c_img_rows, c_img_cols, sum_step);
+
+            F t = t00 - t04 - t20 + t24;
+            X -= t / ((r2) * (r4));
+
+            t = t20 - t24 - t40 + t44;
+            X += t / ((r4 - r2) * (r4));
+
+            t = t00 - t02 - t40 + t42;
+            Y += t / ((r2) * (r4));
+
+            t = t02 - t04 - t42 + t44;
+            Y -= t  / ((r4) * (r4 - r2));
+
+            X = apt*X;
+            Y = apt*Y;
+
+            angle = atan2(Y, X);
+
+            if (angle < 0)
+                angle += 2.0f * CV_PI_F;
+            angle *= 180.0f / CV_PI_F;
+
+        }
+
+        s_X[i] = X;
+        s_Y[i] = Y;
+        s_angle[i] = angle;
+    }
+
+    for(int tid=0; tid<ORI_LOCAL_SIZE; ++tid)
+    {
+        float sumx = 0.0f, sumy = 0.0f;
+        const int dir = tid * ORI_SEARCH_INC;
+        #pragma unroll
+        for (int i = 0; i < ORI_SAMPLES; ++i) {
+            int angle = round(s_angle[i]);
+
+            int d = abs(angle - dir);
+            if (d < ORI_WIN / 2 || d > 360 - ORI_WIN / 2)
+            {
+                sumx += s_X[i];
+                sumy += s_Y[i];
+            }
+        }
+        s_sumx[tid] = sumx;
+        s_sumy[tid] = sumy;
+        s_mod[tid] = sumx*sumx + sumy*sumy;
+    }
+
+    // search for the longest wavelet response vector
+    int bestIdx = 0;
+    for(int idx=1; idx<ORI_LOCAL_SIZE; ++idx)
+    {
+        if (s_mod[idx] > s_mod[bestIdx])
+            bestIdx = idx;
+    }
+
+    float kp_dir = atan2(s_sumy[bestIdx], s_sumx[bestIdx]);
+    if (kp_dir < 0)
+        kp_dir += 2.0f * CV_PI_F;
+    kp_dir *= 180.0f / CV_PI_F;
+
+    kp_dir = 360.0f - kp_dir;
+    if (fabs(kp_dir - 360.f) < FLT_EPSILON)
+        kp_dir = 0.f;
+
+    featureDir[get_global_id(0)] = kp_dir;
+}
+
+__kernel
 void icvSetUpright(
     __global float * keypoints,
     int keypoints_step,
