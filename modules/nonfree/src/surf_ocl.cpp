@@ -664,7 +664,6 @@ void SURF_OCL_Invoker::icvInterpolateKeypoint_gpu(const oclMat &det, const oclMa
 void SURF_OCL_Invoker::icvCalcOrientation_gpu(const oclMat &keypoints, int nFeatures)
 {
     Context *clCxt = counters.clCxt;
-    string kernelName = "icvCalcOrientation_simple";
 
     std::vector< std::pair<size_t, const void *> > args;
 
@@ -682,13 +681,17 @@ void SURF_OCL_Invoker::icvCalcOrientation_gpu(const oclMat &keypoints, int nFeat
     args.push_back( std::make_pair( sizeof(cl_int), (void *)&img_cols));
     args.push_back( std::make_pair( sizeof(cl_int), (void *)&surf_.sum.step));
 
-//    size_t localThreads[3]  = {ORI_LOCAL_SIZE, 1, 1};
-//    size_t globalThreads[3] = {nFeatures * localThreads[0], 1, 1};
-//
-//    openCLExecuteKernelSURF(clCxt, &surf, kernelName, globalThreads, localThreads, args, -1, -1);
+#if 0
+    string kernelName = "icvCalcOrientation";
+    size_t localThreads[3]  = {ORI_LOCAL_SIZE, 1, 1};
+    size_t globalThreads[3] = {nFeatures * localThreads[0], 1, 1};
 
+    openCLExecuteKernelSURF(clCxt, &surf, kernelName, globalThreads, localThreads, args, -1, -1);
+#else
+    string kernelName = "icvCalcOrientation_simple";
     size_t globalThreads[3] = {nFeatures, 1, 1};
     openCLExecuteKernelSURF(clCxt, &surf, kernelName, globalThreads, NULL, args, -1, -1);
+#endif
 }
 
 void SURF_OCL_Invoker::icvSetUpright_gpu(const oclMat &keypoints, int nFeatures)
