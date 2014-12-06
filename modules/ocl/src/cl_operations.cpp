@@ -342,16 +342,16 @@ cl_kernel openCLGetKernelFromSource(const Context *ctx, const cv::ocl::ProgramEn
 void openCLVerifyKernel(const Context *ctx, cl_kernel kernel, size_t *localThreads)
 {
     size_t kernelWorkGroupSize;
-    cl_ulong kernelLocalMemory;
+//    cl_ulong kernelLocalMemory;
     openCLSafeCall(clGetKernelWorkGroupInfo(kernel, getClDeviceID(ctx),
                                             CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), &kernelWorkGroupSize, 0));
-    openCLSafeCall(clGetKernelWorkGroupInfo(kernel, getClDeviceID(ctx),
-                                            CL_KERNEL_LOCAL_MEM_SIZE, sizeof(cl_ulong), &kernelLocalMemory, 0));
-    cl_ulong deviceLocalMemSize;
-    openCLSafeCall(clGetDeviceInfo(getClDeviceID(ctx), CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &deviceLocalMemSize, 0));
-    fprintf(stderr, "%zu %zu %zu\tmax threads: %zu\n", localThreads[0], localThreads[1], localThreads[2], kernelWorkGroupSize);
-    fprintf(stderr, "device local mem size: %"PRIu64"\tkernel local mem: %"PRIu64"\n",
-            deviceLocalMemSize, kernelLocalMemory);
+//    openCLSafeCall(clGetKernelWorkGroupInfo(kernel, getClDeviceID(ctx),
+//                                            CL_KERNEL_LOCAL_MEM_SIZE, sizeof(cl_ulong), &kernelLocalMemory, 0));
+//    cl_ulong deviceLocalMemSize;
+//    openCLSafeCall(clGetDeviceInfo(getClDeviceID(ctx), CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &deviceLocalMemSize, 0));
+//    fprintf(stderr, "%zu %zu %zu\tmax threads: %zu\n", localThreads[0], localThreads[1], localThreads[2], kernelWorkGroupSize);
+//    fprintf(stderr, "device local mem size: %"PRIu64"\tkernel local mem: %"PRIu64"\n",
+//            deviceLocalMemSize, kernelLocalMemory);
 
     CV_Assert( localThreads[0] <= ctx->getDeviceInfo().maxWorkItemSizes[0] );
     CV_Assert( localThreads[1] <= ctx->getDeviceInfo().maxWorkItemSizes[1] );
