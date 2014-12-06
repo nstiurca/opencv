@@ -1158,7 +1158,7 @@ void icvCalcOrientation_simple(
                 s_sumy[tid] += s_Y[i];
             }
         }
-#elif 1
+#elif 0
         const int angle = round(s_angle[i]);
 
         int tmax = (angle                     + ORI_SEARCH_INC-1)/ORI_SEARCH_INC;
@@ -1188,8 +1188,34 @@ void icvCalcOrientation_simple(
         }
 #elif 1
         const int a = round(s_angle[i]);
-        int i1 = (a+1-ORI_WIN/2)/ORI_SEARCH_INC; // - (a+1-ORI_WIN/2<0);
-        int i2 = (a-1+ORI_WIN/2)/ORI_SEARCH_INC;
+        int i1 = a - ORI_WIN/2; //if(i1<0)    i1 += 360;
+        int i2 = a + ORI_WIN/2; //if(i2>=360) i2 -= 360;
+#if 1
+        if(i1<0) {
+            i1 += 360;
+            i2 += 360;
+        }
+        for(int j=i1/ORI_SEARCH_INC + 1; j*ORI_SEARCH_INC < i2; ++j) {
+            s_sumx[j%ORI_LOCAL_SIZE] += s_X[i];
+            s_sumy[j%ORI_LOCAL_SIZE] += s_Y[i];
+        }
+#else
+        for(; i1<0; i1+=ORI_SEARCH_INC) {
+            int idx = (i1+360)/ORI_SEARCH_INC;
+            s_sumx[idx] = s_X[i];
+            s_sumy[idx] = s_Y[i];
+        }
+        for(; j2>=360; j2-=ORI_SEARCH_INC) {
+            int idx = (i2-360)/ORI_SEARCH_INC;
+            s_sumx[idx] = s_X[i];
+            s_sumy[idx] = s_Y[i];
+        }
+        for(; j1<j2)
+#endif
+#elif 1
+        const int a = round(s_angle[i]);
+        int i1 = (a-ORI_WIN/2)/ORI_SEARCH_INC + 1 + (a+1-ORI_WIN/2<0);
+        int i2 = (a+ORI_WIN/2)/ORI_SEARCH_INC ;
         for(; i1<0; ++i1) {
             s_sumx[i1+ORI_LOCAL_SIZE] += s_X[i];
             s_sumy[i1+ORI_LOCAL_SIZE] += s_Y[i];
