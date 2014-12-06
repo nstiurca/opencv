@@ -59,7 +59,7 @@ typedef perf::TestBaseWithParam<std::string> OCL_SURF;
 
 #define OCL_TEST_CYCLE() for( ; startTimer(), next(); cv::ocl::finish(), stopTimer())
 
-PERF_TEST_P(OCL_SURF, DISABLED_with_data_transfer, testing::Values(SURF_IMAGES))
+PERF_TEST_P(OCL_SURF, with_data_transfer, testing::Values(SURF_IMAGES))
 {
     string filename = getDataPath(GetParam());
     Mat src = imread(filename, IMREAD_GRAYSCALE);
@@ -94,7 +94,7 @@ PERF_TEST_P(OCL_SURF, DISABLED_with_data_transfer, testing::Values(SURF_IMAGES))
     SANITY_CHECK_NOTHING();
 }
 
-PERF_TEST_P(OCL_SURF, DISABLED_without_data_transfer, testing::Values(SURF_IMAGES))
+PERF_TEST_P(OCL_SURF, without_data_transfer, testing::Values(SURF_IMAGES))
 {
     string filename = getDataPath(GetParam());
     Mat src = imread(filename, IMREAD_GRAYSCALE);
@@ -123,7 +123,7 @@ PERF_TEST_P(OCL_SURF, DISABLED_without_data_transfer, testing::Values(SURF_IMAGE
 
 
 
-PERF_TEST_P(OCL_SURF, DISABLED_detect, testing::Values(SURF_IMAGES))
+PERF_TEST_P(OCL_SURF, detect, testing::Values(SURF_IMAGES))
 {
     String filename = getDataPath(GetParam());
     Mat frame = imread(filename, IMREAD_GRAYSCALE);
@@ -150,7 +150,7 @@ PERF_TEST_P(OCL_SURF, DISABLED_detect, testing::Values(SURF_IMAGES))
     SANITY_CHECK_KEYPOINTS(points, 1e-3);
 }
 
-PERF_TEST_P(OCL_SURF, DISABLED_extract, testing::Values(SURF_IMAGES))
+PERF_TEST_P(OCL_SURF, extract, testing::Values(SURF_IMAGES))
 {
     String filename = getDataPath(GetParam());
     Mat frame = imread(filename, IMREAD_GRAYSCALE);
@@ -180,7 +180,7 @@ PERF_TEST_P(OCL_SURF, DISABLED_extract, testing::Values(SURF_IMAGES))
     SANITY_CHECK(descriptors, 1e-4);
 }
 
-PERF_TEST_P(OCL_SURF, DISABLED_full, testing::Values(SURF_IMAGES))
+PERF_TEST_P(OCL_SURF, full, testing::Values(SURF_IMAGES))
 {
     String filename = getDataPath(GetParam());
     Mat frame = imread(filename, IMREAD_GRAYSCALE);
