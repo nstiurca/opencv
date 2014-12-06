@@ -1022,7 +1022,12 @@ void icvCalcOrientation_simple(
     // histograms of samples within ORI_WIN of each sample
     float s_sumx[ORI_LOCAL_SIZE] = {};
     float s_sumy[ORI_LOCAL_SIZE] = {};
-    float s_mod[ORI_LOCAL_SIZE]  = {};
+//    float s_mod[ORI_LOCAL_SIZE]  = {};
+    for(int i=0; i<ORI_LOCAL_SIZE; ++i) {
+        s_sumx[i] = 0.f;
+        s_sumy[i] = 0.f;
+//        s_mod[i] = 0.f;
+    }
 
     // The sampling intervals and wavelet sized for selecting an orientation
     // and building the keypoint descriptor are defined relative to 's'
@@ -1087,6 +1092,31 @@ void icvCalcOrientation_simple(
                 angle += 2.0f * CV_PI_F;
             angle *= 180.0f / CV_PI_F;
 
+            // find which orientation bins each sample maps onto
+//            int a = round(angle);
+//            int a_min = a - ORI_WIN/2;
+//            int a_max = a + ORI_WIN/2;
+//            for(int a = round(angle) - ORI_WIN/2; a<round(angle) + ORI_WIN/2; a+= ORI_SEARCH_INC) {
+//                int idx = ((a/ORI_SEARCH_INC)+ORI_LOCAL_SIZE)%ORI_LOCAL_SIZE;
+//                s_sumx[idx] += X;
+//                s_sumy[idx] += Y;
+//            }
+
+//            const int a = round(angle);
+//            int i1 = (a+1-ORI_WIN/2)/ORI_SEARCH_INC;
+//            int i2 = (a-1+ORI_WIN/2)/ORI_SEARCH_INC;
+//            for(; i1<0; ++i1) {
+//                s_sumx[i1+ORI_LOCAL_SIZE] += X;
+//                s_sumy[i1+ORI_LOCAL_SIZE] += Y;
+//            }
+//            for(; i2>=ORI_LOCAL_SIZE; --i2) {
+//                s_sumx[i2-ORI_LOCAL_SIZE] += X;
+//                s_sumy[i2-ORI_LOCAL_SIZE] += Y;
+//            }
+//            for(; i1<=i2; ++i1) {
+//                s_sumx[i1] += X;
+//                s_sumy[i1] += Y;
+//            }
         }
 
         s_X[i] = X;
@@ -1094,32 +1124,97 @@ void icvCalcOrientation_simple(
         s_angle[i] = angle;
     }
 
-    for(int tid=0; tid<ORI_LOCAL_SIZE; ++tid)
-    {
-        float sumx = 0.0f, sumy = 0.0f;
-        const int dir = tid * ORI_SEARCH_INC;
-        #pragma unroll
-        for (int i = 0; i < ORI_SAMPLES; ++i) {
-            int angle = round(s_angle[i]);
+//    for(int tid=0; tid<ORI_LOCAL_SIZE; ++tid)
+//    {
+//        float sumx = 0.0f, sumy = 0.0f;
+//        const int dir = tid * ORI_SEARCH_INC;
+//        #pragma unroll
+//        for (int i = 0; i < ORI_SAMPLES; ++i) {
+//            int angle = round(s_angle[i]);
+//
+//            int d = abs(angle - dir);
+//            if (d < ORI_WIN / 2 || d > 360 - ORI_WIN / 2)
+//            {
+//                sumx += s_X[i];
+//                sumy += s_Y[i];
+//            }
+//        }
+//        s_sumx[tid] = sumx;
+//        s_sumy[tid] = sumy;
+////        s_mod[tid] = sumx*sumx + sumy*sumy;
+//    }
+
+    for(int i=0; i<ORI_SAMPLES; ++i) {
+#if 0
+        const int angle = round(s_angle[i]);
+
+        for(int tid=0; tid<ORI_LOCAL_SIZE; ++tid) {
+            const int dir = tid * ORI_SEARCH_INC;
 
             int d = abs(angle - dir);
             if (d < ORI_WIN / 2 || d > 360 - ORI_WIN / 2)
             {
-                sumx += s_X[i];
-                sumy += s_Y[i];
+                s_sumx[tid] += s_X[i];
+                s_sumy[tid] += s_Y[i];
             }
         }
-        s_sumx[tid] = sumx;
-        s_sumy[tid] = sumy;
-        s_mod[tid] = sumx*sumx + sumy*sumy;
+#elif 1
+        const int angle = round(s_angle[i]);
+
+        int tmax = (angle                     + ORI_SEARCH_INC-1)/ORI_SEARCH_INC;
+
+        int a = angle - ORI_WIN / 2;
+        int c = ORI_SEARCH_INC;
+        int tstart= max(a/c - (a<0) + 1,0);
+        int tend = (angle + ORI_WIN / 2 - 360 + ORI_SEARCH_INC-1)/ORI_SEARCH_INC;
+        int tid=0;
+        for(tid=0; tid<tend; ++tid) {
+            s_sumx[tid] += s_X[i];
+            s_sumy[tid] += s_Y[i];
+        }
+        for(tid=max(tstart,0); tid < tmax; ++tid) {
+            s_sumx[tid] += s_X[i];
+            s_sumy[tid] += s_Y[i];
+        }
+        tid = tmax;
+
+        for(; tid<ORI_LOCAL_SIZE; ++tid) {
+            int d = (tid * ORI_SEARCH_INC - angle);
+            if ((d < ORI_WIN / 2) || (d > 360 - ORI_WIN / 2))
+            {
+                s_sumx[tid] += s_X[i];
+                s_sumy[tid] += s_Y[i];
+            }
+        }
+#elif 1
+        const int a = round(s_angle[i]);
+        int i1 = (a+1-ORI_WIN/2)/ORI_SEARCH_INC; // - (a+1-ORI_WIN/2<0);
+        int i2 = (a-1+ORI_WIN/2)/ORI_SEARCH_INC;
+        for(; i1<0; ++i1) {
+            s_sumx[i1+ORI_LOCAL_SIZE] += s_X[i];
+            s_sumy[i1+ORI_LOCAL_SIZE] += s_Y[i];
+        }
+        for(; i2>=ORI_LOCAL_SIZE; --i2) {
+            s_sumx[i2-ORI_LOCAL_SIZE] += s_X[i];
+            s_sumy[i2-ORI_LOCAL_SIZE] += s_Y[i];
+        }
+        for(; i1<=i2; ++i1) {
+            s_sumx[i1] += s_X[i];
+            s_sumy[i1] += s_Y[i];
+        }
+#endif
     }
 
     // search for the longest wavelet response vector
     int bestIdx = 0;
+    float bestMod = s_sumx[0]*s_sumx[0] + s_sumy[0]*s_sumy[0];
     for(int idx=1; idx<ORI_LOCAL_SIZE; ++idx)
     {
-        if (s_mod[idx] > s_mod[bestIdx])
+        float mod = s_sumx[idx]*s_sumx[idx] + s_sumy[idx]*s_sumy[idx];
+        if (mod > bestMod) {
             bestIdx = idx;
+            bestMod = mod;
+        }
     }
 
     float kp_dir = atan2(s_sumy[bestIdx], s_sumx[bestIdx]);
