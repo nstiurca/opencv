@@ -681,7 +681,7 @@ void SURF_OCL_Invoker::icvCalcOrientation_gpu(const oclMat &keypoints, int nFeat
     args.push_back( std::make_pair( sizeof(cl_int), (void *)&img_cols));
     args.push_back( std::make_pair( sizeof(cl_int), (void *)&surf_.sum.step));
 
-#if 0
+#if 1
     string kernelName = "icvCalcOrientation";
     size_t localThreads[3]  = {ORI_LOCAL_SIZE, 1, 1};
     size_t globalThreads[3] = {nFeatures * localThreads[0], 1, 1};
