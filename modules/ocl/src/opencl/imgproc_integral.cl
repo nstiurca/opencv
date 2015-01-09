@@ -16,7 +16,6 @@
 //
 // @Authors
 //    Shengen Yan,yanshengen@gmail.com
-//    Nicu Stiurca,nstiurca@seas.upenn.edu
 //
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
@@ -61,49 +60,6 @@
 #define NUM_BANKS 32
 #define GET_CONFLICT_OFFSET(lid) ((lid) >> LOG_NUM_BANKS)
 
-kernel void simple_integral_rows_D4(__global uchar *src, __global int *sum, int src_offset, int rows, int cols,
-                            int src_step, int sum_step)
-{
-    const int gid = get_global_id(0);
-
-    if(gid < rows) {
-        src_offset /= sizeof(*src);
-        src_step   /= sizeof(*src);
-        sum_step   /= sizeof(*sum);
-
-        src += gid*src_step + src_offset;
-        sum += gid*sum_step;
-
-        int s = 0;
-        for(int i=0; i<cols; ++i) {
-            sum[i] = s;
-            s += src[i];
-        }
-        sum[cols] = s;
-    }
-}
-
-kernel void simple_integral_cols_D4(__global int *src, __global int *sum, int rows, int cols,
-                        int src_step, int sum_step, int sum_offset)
-{
-    const int gid = get_global_id(0);
-
-    if(gid <= cols) {
-        sum_offset /= sizeof(*sum);
-        src_step   /= sizeof(*src);
-        sum_step   /= sizeof(*sum);
-
-        src += gid;
-        sum += gid + sum_offset;
-
-        int s = 0;
-        for(int i=0; i<rows; ++i) {
-            sum[i*sum_step] = s;
-            s += src[i*src_step];
-        }
-        sum[rows*sum_step] = s;
-    }
-}
 
 kernel void integral_cols_D4(__global uchar4 *src,__global int *sum ,__global float *sqsum,
                           int src_offset,int pre_invalid,int rows,int cols,int src_step,int dst_step)
