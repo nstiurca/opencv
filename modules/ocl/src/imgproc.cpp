@@ -958,42 +958,43 @@ namespace cv
         void integral(const oclMat &src, oclMat &sum)
         {
             CV_Assert(src.type() == CV_8UC1);
-            int vlen = 4;
-            int offset = src.offset / vlen;
-            int pre_invalid = src.offset % vlen;
-            int vcols = (pre_invalid + src.cols + vlen - 1) / vlen;
 
             oclMat t_sum;
-            int w = src.cols + 1, h = src.rows + 1;
-            int depth = src.depth() == CV_8U ? CV_32S : CV_32F;
-            int type = CV_MAKE_TYPE(depth, 1);
+            const int w = src.cols;
+            const int h = src.rows;
+            const int depth = src.depth() == CV_8U  ? CV_32S
+                            : src.depth() == CV_32F ? CV_32F
+                            : CV_64F;
+            const int type = CV_MAKE_TYPE(depth, 1);
 
-            t_sum.create(src.cols, src.rows, type);
-            sum.create(h, w, type);
+            t_sum.create(h, w+1, type);
+            sum.create(h+1, w+1, type);
 
-            int sum_offset = sum.offset / vlen;
             vector<pair<size_t , const void *> > args;
             args.push_back( make_pair( sizeof(cl_mem) , (void *)&src.data ));
             args.push_back( make_pair( sizeof(cl_mem) , (void *)&t_sum.data ));
-            args.push_back( make_pair( sizeof(cl_int) , (void *)&offset ));
-            args.push_back( make_pair( sizeof(cl_int) , (void *)&pre_invalid ));
+            args.push_back( make_pair( sizeof(cl_int) , (void *)&src.offset ));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&src.rows ));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&src.cols ));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&src.step ));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&t_sum.step));
-            size_t gt[3] = {((vcols + 1) / 2) * 256, 1, 1}, lt[3] = {256, 1, 1};
-            openCLExecuteKernel(src.clCxt, &imgproc_integral_sum, "integral_sum_cols", gt, lt, args, -1, depth);
+//            size_t gt[3] = {(h+255)/256, 1, 1}, lt[3] = {256,1,1};
+            size_t gt[3] = {h, 1, 1};
+            size_t *lt = NULL;
+//            size_t lt[3] = {256,1,1};
+            openCLExecuteKernel(src.clCxt, &imgproc_integral, "simple_integral_rows", gt, lt, args, -1, depth);
 
             args.clear();
             args.push_back( make_pair( sizeof(cl_mem) , (void *)&t_sum.data ));
             args.push_back( make_pair( sizeof(cl_mem) , (void *)&sum.data ));
-            args.push_back( make_pair( sizeof(cl_int) , (void *)&t_sum.rows ));
-            args.push_back( make_pair( sizeof(cl_int) , (void *)&t_sum.cols ));
+            args.push_back( make_pair( sizeof(cl_int) , (void *)&src.rows ));
+            args.push_back( make_pair( sizeof(cl_int) , (void *)&src.cols ));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&t_sum.step ));
             args.push_back( make_pair( sizeof(cl_int) , (void *)&sum.step));
-            args.push_back( make_pair( sizeof(cl_int) , (void *)&sum_offset));
-            size_t gt2[3] = {t_sum.cols  * 32, 1, 1}, lt2[3] = {256, 1, 1};
-            openCLExecuteKernel(src.clCxt, &imgproc_integral_sum, "integral_sum_rows", gt2, lt2, args, -1, depth);
+            args.push_back( make_pair( sizeof(cl_int) , (void *)&sum.offset));
+//            gt[0] = (w+1+255)/256;
+            gt[0] = w+1;
+            openCLExecuteKernel(src.clCxt, &imgproc_integral, "simple_integral_cols", gt, lt, args, -1, depth);
         }
 
         /////////////////////// corner //////////////////////////////
