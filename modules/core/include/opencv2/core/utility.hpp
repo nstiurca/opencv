@@ -465,7 +465,7 @@ void Mat::forEach_impl(const Functor& operation) {
     };
 
     parallel_for_(cv::Range(0, LINES), PixelOperationWrapper(reinterpret_cast<Mat_<_Tp>*>(this), operation));
-};
+}
 
 /////////////////////////// Synchronization Primitives ///////////////////////////////
 
@@ -745,5 +745,9 @@ template<> inline std::string CommandLineParser::get<std::string>(const String& 
 //! @endcond
 
 } //namespace cv
+
+#ifndef DISABLE_OPENCV_24_COMPATIBILITY
+#include "opencv2/core/core_c.h"
+#endif
 
 #endif //__OPENCV_CORE_UTILITY_H__
