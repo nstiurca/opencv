@@ -171,6 +171,24 @@ void dumpOpenCLDevice()
         DUMP_MESSAGE_STDOUT("    Host unified memory = "<< isUnifiedMemoryStr);
         DUMP_PROPERTY_XML("cv_ocl_current_hostUnifiedMemory", device.hostUnifiedMemory());
 
+        const char* localMemIsStr;
+        switch(device.localMemType()) {
+          case Device::NO_LOCAL_MEM:
+            localMemIsStr = "N/A";
+            break;
+          case Device::LOCAL_IS_LOCAL:
+            localMemIsStr = "local";
+            break;
+          case Device::LOCAL_IS_GLOBAL:
+            localMemIsStr = "global";
+            break;
+          default:
+            localMemIsStr = "ERROR: UNKNOWN";
+            break;
+        }
+        DUMP_MESSAGE_STDOUT("    Local memory is = " << localMemIsStr);
+        DUMP_PROPERTY_XML("cv_ocl_current_localMemType", device.localMemType());
+
         const char* haveAmdBlasStr = haveAmdBlas() ? "Yes" : "No";
         DUMP_MESSAGE_STDOUT("    Has AMD Blas = "<< haveAmdBlasStr);
         DUMP_PROPERTY_XML("cv_ocl_current_AmdBlas", haveAmdBlas());
