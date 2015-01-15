@@ -8,7 +8,15 @@ namespace ocl {
 
 typedef ::perf::TestBaseWithParam<std::string> ORBFixture;
 
-#define ORB_IMAGES OCL_PERF_ENUM("cv/detectors_descriptors_evaluation/images_datasets/leuven/img1.png", "stitching/a3.png")
+#define ORB_IMAGES OCL_PERF_ENUM(\
+    "cv/detectors_descriptors_evaluation/images_datasets/leuven/img1.png",\
+    "stitching/a3.png",\
+    "perf/outdoor_640x512.png",\
+    "perf/outdoor_752x480.png",\
+    "perf/outdoor_800x600.png",\
+    "perf/outdoor_1280x1024.png",\
+    "perf/indoor_752x480.png",\
+    "perf/indoor_1280x960.png" )
 
 OCL_PERF_TEST_P(ORBFixture, ORB_Detect, ORB_IMAGES)
 {
