@@ -173,7 +173,8 @@ public:
         UNKNOWN_VENDOR=0,
         VENDOR_AMD=1,
         VENDOR_INTEL=2,
-        VENDOR_NVIDIA=3
+        VENDOR_NVIDIA=3,
+        VENDOR_MALI=4
     };
     int vendorID() const;
     // FIXIT
@@ -182,6 +183,7 @@ public:
     // After fix restore code in arithm.cpp: ocl_compare()
     inline bool isAMD() const { return vendorID() == VENDOR_AMD; }
     inline bool isIntel() const { return vendorID() == VENDOR_INTEL; }
+    inline bool isMali() const { return vendorID() == VENDOR_MALI; }
 
     int maxClockFrequency() const;
     int maxComputeUnits() const;

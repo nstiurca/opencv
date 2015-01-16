@@ -1774,6 +1774,12 @@ struct Device::Impl
             vendorID_ = VENDOR_INTEL;
         else if (vendorName_ == "NVIDIA Corporation")
             vendorID_ = VENDOR_NVIDIA;
+        else if (strstr(name_.c_str(), "Mali") != NULL) {
+            vendorID_ = VENDOR_MALI;
+            // Mali platform has unified memory, but CL_DEVICE_HOST_UNIFIED_MEMORY is
+            // wrong for some reason, so override
+            hostUnifiedMemory_ = true;
+        }
         else
             vendorID_ = UNKNOWN_VENDOR;
     }
