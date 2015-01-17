@@ -149,6 +149,12 @@ void dumpOpenCLDevice()
         DUMP_MESSAGE_STDOUT("    Version = " << device.version());
         DUMP_PROPERTY_XML("cv_ocl_current_deviceVersion", device.version());
 
+        DUMP_MESSAGE_STDOUT("    Vendor name = " << device.vendorName());
+        DUMP_PROPERTY_XML("cv_ocl_current_deviceVendorName", device.vendorName());
+
+        DUMP_MESSAGE_STDOUT("    Vendor ID = " << device.vendorID());
+        DUMP_PROPERTY_XML("cv_ocl_current_deviceVendorID", device.vendorID());
+
         DUMP_MESSAGE_STDOUT("    Compute units = "<< device.maxComputeUnits());
         DUMP_PROPERTY_XML("cv_ocl_current_maxComputeUnits", device.maxComputeUnits());
 
