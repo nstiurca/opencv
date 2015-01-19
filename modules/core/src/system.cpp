@@ -214,7 +214,7 @@ void Exception::formatMessage()
             ss << std::endl << symbols[i];
         }
         free(symbols);
-        msg += ss.str();
+        msg += ss.str().c_str();
     } else {
         msg += "\nNo stacktrace available";
     }
