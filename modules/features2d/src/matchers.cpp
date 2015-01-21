@@ -1273,6 +1273,7 @@ void FlannBasedMatcher::convertToDMatches( const DescriptorCollection& collectio
     matches.resize( indices.rows );
     for( int i = 0; i < indices.rows; i++ )
     {
+        matches[i].clear();
         for( int j = 0; j < indices.cols; j++ )
         {
             int idx = indices.at<int>(i, j);
