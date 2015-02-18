@@ -67,6 +67,8 @@ public:
   virtual void read( const FileNode& fn );
   virtual void write( FileStorage& fs ) const;
 
+  virtual AlgorithmInfo* info() const;
+
 protected:
   struct CV_EXPORTS Center
   {
@@ -80,6 +82,32 @@ protected:
 
   Params params;
 };
+
+CV_INIT_ALGORITHM(SimpleBlobDetectorImpl, "Feature2D.SimpleBlobDetector",
+    obj.info()->addParam(obj, "thresholdStep", obj.params.thresholdStep);
+    obj.info()->addParam(obj, "minThreshold", obj.params.minThreshold);
+    obj.info()->addParam(obj, "maxThreshold", obj.params.maxThreshold);
+    obj.info()->addParam(obj, "minRepeatability", obj.params.minRepeatability);
+    obj.info()->addParam(obj, "minDistBetweenBlobs", obj.params.minDistBetweenBlobs);
+
+    obj.info()->addParam(obj, "filterByColor", obj.params.filterByColor);
+    obj.info()->addParam(obj, "blobColor", obj.params.blobColor);
+
+    obj.info()->addParam(obj, "filterByArea", obj.params.filterByArea);
+    obj.info()->addParam(obj, "minArea", obj.params.minArea);
+    obj.info()->addParam(obj, "maxArea", obj.params.maxArea);
+
+    obj.info()->addParam(obj, "filterByCircularity", obj.params.filterByCircularity);
+    obj.info()->addParam(obj, "minCircularity", obj.params.minCircularity);
+    obj.info()->addParam(obj, "maxCircularity", obj.params.maxCircularity);
+
+    obj.info()->addParam(obj, "filterByInertia", obj.params.filterByInertia);
+    obj.info()->addParam(obj, "minInertiaRatio", obj.params.minInertiaRatio);
+    obj.info()->addParam(obj, "maxInertiaRatio", obj.params.maxInertiaRatio);
+
+    obj.info()->addParam(obj, "filterByConvexity", obj.params.filterByConvexity);
+    obj.info()->addParam(obj, "minConvexity", obj.params.minConvexity);
+    obj.info()->addParam(obj, "maxConvexity", obj.params.maxConvexity))
 
 /*
 *  SimpleBlobDetector

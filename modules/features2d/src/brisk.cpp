@@ -88,6 +88,8 @@ public:
                      OutputArray descriptors,
                      bool useProvidedKeypoints );
 
+    virtual AlgorithmInfo* info() const;
+
 protected:
 
     void computeKeypointsNoOrientation(InputArray image, InputArray mask, std::vector<KeyPoint>& keypoints) const;
@@ -141,6 +143,9 @@ protected:
     static const float basicSize_;
 };
 
+CV_INIT_ALGORITHM(BRISK_Impl, "Feature2D.BRISK",
+    obj.info()->addParam(obj, "threshold", obj.threshold);
+    obj.info()->addParam(obj, "octaves", obj.octaves));
 
 // a layer in the Brisk detector pyramid
 class CV_EXPORTS BriskLayer

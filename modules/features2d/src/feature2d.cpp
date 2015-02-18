@@ -47,10 +47,33 @@ namespace cv
 
 bool initModule_features2d()
 {
-  Ptr<ORB> orb = ORB::create();
-  orb->info();
+    Ptr<Feature2D> f;
 
-  return true;
+    f = ORB::create();
+    f->info();
+
+    f = BRISK::create();
+    f->info();
+
+    f = MSER::create();
+    f->info();
+
+    f = FastFeatureDetector::create();
+    f->info();
+
+    f = GFTTDetector::create();
+    f->info();
+
+    f = SimpleBlobDetector::create();
+    f->info();
+
+    f = KAZE::create();
+    f->info();
+
+    f = AKAZE::create();
+    f->info();
+
+    return true;
 }
 
 using std::vector;

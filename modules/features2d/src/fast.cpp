@@ -364,7 +364,7 @@ void FAST(InputArray _img, std::vector<KeyPoint>& keypoints, int threshold, bool
 class FastFeatureDetector_Impl : public FastFeatureDetector
 {
 public:
-    FastFeatureDetector_Impl( int _threshold, bool _nonmaxSuppression, int _type )
+    FastFeatureDetector_Impl( int _threshold=10, bool _nonmaxSuppression=true, int _type=FastFeatureDetector::TYPE_9_16 )
     : threshold(_threshold), nonmaxSuppression(_nonmaxSuppression), type((short)_type)
     {}
 
@@ -416,10 +416,17 @@ public:
     void setType(int type_) { type = type_; }
     int getType() const { return type; }
 
+    virtual AlgorithmInfo* info() const;
+
     int threshold;
     bool nonmaxSuppression;
     int type;
 };
+
+CV_INIT_ALGORITHM(FastFeatureDetector_Impl, "Feature2D.FastFeatureDetector",
+    obj.info()->addParam(obj, "threshold", obj.threshold);
+    obj.info()->addParam(obj, "nonmaxSuppression", obj.nonmaxSuppression);
+    obj.info()->addParam(obj, "type", obj.type))
 
 Ptr<FastFeatureDetector> FastFeatureDetector::create( int threshold, bool nonmaxSuppression, int type )
 {
