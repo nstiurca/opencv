@@ -866,11 +866,6 @@ public:
     void radiusMatch( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, float maxDistance,
                       InputArrayOfArrays masks=noArray(), bool compactResult=false );
 
-    // Reads matcher object from a file node
-    virtual void read( const FileNode& );
-    // Writes matcher object to a file storage
-    virtual void write( FileStorage& ) const;
-
     /** @brief Clones the matcher.
 
     @param emptyTrainData If emptyTrainData is false, the method creates a deep copy of the object,
@@ -888,7 +883,12 @@ public:
     -   `BruteForce-L1`
     -   `BruteForce-Hamming`
     -   `BruteForce-Hamming(2)`
-    -   `FlannBased`
+    -   `FlannBased` (defaults are KD trees and L2 distance)
+    -   `FlannBased-KDtree` (same as `FlannBased`)
+    -   `FlannBased-KMeans` (uses hierarchical k-means tree)
+    -   `FlannBased-Composite` (combines KD-trees with k-means tree)
+    -   `FlannBased-Autotuned` (chooses best of kd-trees, k-means, and linear for the dataset)
+    -   `FlannBased-LSH` (Hamming distance)
      */
     CV_WRAP static Ptr<DescriptorMatcher> create( const String& descriptorMatcherType );
 protected:
@@ -966,6 +966,9 @@ public:
     virtual bool isMaskSupported() const { return true; }
 
     virtual Ptr<DescriptorMatcher> clone( bool emptyTrainData=false ) const;
+
+    virtual AlgorithmInfo* info() const;
+
 protected:
     virtual void knnMatchImpl( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, int k,
         InputArrayOfArrays masks=noArray(), bool compactResult=false );
@@ -1002,6 +1005,8 @@ public:
     virtual bool isMaskSupported() const;
 
     virtual Ptr<DescriptorMatcher> clone( bool emptyTrainData=false ) const;
+
+    virtual cv::AlgorithmInfo* info() const;
 protected:
     static void convertToDMatches( const DescriptorCollection& descriptors,
                                    const Mat& indices, const Mat& distances,

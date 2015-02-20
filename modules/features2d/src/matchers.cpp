@@ -645,12 +645,6 @@ void DescriptorMatcher::radiusMatch( InputArray queryDescriptors, std::vector<st
     radiusMatchImpl( queryDescriptors, matches, maxDistance, masks, compactResult );
 }
 
-void DescriptorMatcher::read( const FileNode& )
-{}
-
-void DescriptorMatcher::write( FileStorage& ) const
-{}
-
 bool DescriptorMatcher::isPossibleMatch( InputArray _mask, int queryIdx, int trainIdx )
 {
     Mat mask = _mask.getMat();
@@ -674,6 +668,10 @@ bool DescriptorMatcher::isMaskedOut( InputArrayOfArrays _masks, int queryIdx )
 
 
 ////////////////////////////////////////////////////// BruteForceMatcher /////////////////////////////////////////////////
+
+CV_INIT_ALGORITHM(BFMatcher, "DescriptorMatcher.BruteForce",
+    obj.info()->addParam(obj, "normType", obj.normType);
+    obj.info()->addParam(obj, "crossCheck", obj.crossCheck))
 
 BFMatcher::BFMatcher( int _normType, bool _crossCheck )
 {
@@ -971,15 +969,42 @@ void BFMatcher::radiusMatchImpl( InputArray _queryDescriptors, std::vector<std::
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+CV_INIT_ALGORITHM(FlannBasedMatcher, "DescriptorMatcher.FlannBased", {} )
+
 /*
  * Factory function for DescriptorMatcher creating
  */
-Ptr<DescriptorMatcher> DescriptorMatcher::create( const String& descriptorMatcherType )
+Ptr<DescriptorMatcher> DescriptorMatcher::create( const String& descriptorMatcherType_ )
 {
+    const String prefix("DescriptorMatcher.");      // optional prefix
+    const String &descriptorMatcherType = descriptorMatcherType_.find(prefix) == 0
+            ? descriptorMatcherType_.substr(prefix.length())
+            : descriptorMatcherType_;
+
     Ptr<DescriptorMatcher> dm;
     if( !descriptorMatcherType.compare( "FlannBased" ) )
     {
         dm = makePtr<FlannBasedMatcher>();
+    }
+    else if( !descriptorMatcherType.compare( "FlannBased-KDtree" ) )
+    {
+        dm = makePtr<FlannBasedMatcher>(makePtr<flann::KDTreeIndexParams>());
+    }
+    else if( !descriptorMatcherType.compare( "FlannBased-KMeans" ) )
+    {
+        dm = makePtr<FlannBasedMatcher>(makePtr<flann::KMeansIndexParams>());
+    }
+    else if( !descriptorMatcherType.compare( "FlannBased-Composite" ) )
+    {
+        dm = makePtr<FlannBasedMatcher>(makePtr<flann::CompositeIndexParams>());
+    }
+    else if( !descriptorMatcherType.compare( "FlannBased-Autotuned" ) )
+    {
+        dm = makePtr<FlannBasedMatcher>(makePtr<flann::AutotunedIndexParams>());
+    }
+    else if( !descriptorMatcherType.compare( "FlannBased-LSH" ) )
+    {
+        dm = makePtr<FlannBasedMatcher>(makePtr<flann::LshIndexParams>());
     }
     else if( !descriptorMatcherType.compare( "BruteForce" ) ) // L2
     {
@@ -1142,6 +1167,7 @@ void FlannBasedMatcher::read( const FileNode& fn)
 
 void FlannBasedMatcher::write( FileStorage& fs) const
 {
+     fs << "name" << "DescriptorMatcher.FlannBased";
      fs << "indexParams" << "[";
 
      if (indexParams)

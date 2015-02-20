@@ -112,7 +112,7 @@ struct CV_EXPORTS KMeansIndexParams : public IndexParams
 
 struct CV_EXPORTS LshIndexParams : public IndexParams
 {
-    LshIndexParams(int table_number, int key_size, int multi_probe_level);
+    LshIndexParams(int table_number = 12, int key_size = 20, int multi_probe_level = 2);
 };
 
 struct CV_EXPORTS SavedIndexParams : public IndexParams
