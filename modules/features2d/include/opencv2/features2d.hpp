@@ -879,7 +879,8 @@ public:
 
     @param descriptorMatcherType Descriptor matcher type. Now the following matcher types are
     supported:
-    -   `BruteForce` (it uses L2 )
+    -   `BruteForce` (same as `BruteForce-L2` )
+    -   `BruteForce-L2`
     -   `BruteForce-L1`
     -   `BruteForce-Hamming`
     -   `BruteForce-Hamming(2)`

@@ -1006,7 +1006,8 @@ Ptr<DescriptorMatcher> DescriptorMatcher::create( const String& descriptorMatche
     {
         dm = makePtr<FlannBasedMatcher>(makePtr<flann::LshIndexParams>());
     }
-    else if( !descriptorMatcherType.compare( "BruteForce" ) ) // L2
+    else if( !descriptorMatcherType.compare( "BruteForce" ) ||
+             !descriptorMatcherType.compare( "BruteForce-L2") ) // L2
     {
         dm = makePtr<BFMatcher>(int(NORM_L2)); // anonymous enums can't be template parameters
     }
@@ -1088,78 +1089,82 @@ void FlannBasedMatcher::read( const FileNode& fn)
          indexParams = makePtr<flann::IndexParams>();
 
      FileNode ip = fn["indexParams"];
-     CV_Assert(ip.type() == FileNode::SEQ);
+     if(ip.type() != FileNode::NONE) {
+         CV_Assert(ip.type() == FileNode::SEQ);
 
-     for(int i = 0; i < (int)ip.size(); ++i)
-     {
-        CV_Assert(ip[i].type() == FileNode::MAP);
-        String _name =  (String)ip[i]["name"];
-        int type =  (int)ip[i]["type"];
+         for(int i = 0; i < (int)ip.size(); ++i)
+         {
+            CV_Assert(ip[i].type() == FileNode::MAP);
+            String _name =  (String)ip[i]["name"];
+            int type =  (int)ip[i]["type"];
 
-        switch(type)
-        {
-        case CV_8U:
-        case CV_8S:
-        case CV_16U:
-        case CV_16S:
-        case CV_32S:
-            indexParams->setInt(_name, (int) ip[i]["value"]);
-            break;
-        case CV_32F:
-            indexParams->setFloat(_name, (float) ip[i]["value"]);
-            break;
-        case CV_64F:
-            indexParams->setDouble(_name, (double) ip[i]["value"]);
-            break;
-        case CV_USRTYPE1:
-            indexParams->setString(_name, (String) ip[i]["value"]);
-            break;
-        case CV_MAKETYPE(CV_USRTYPE1,2):
-            indexParams->setBool(_name, (int) ip[i]["value"] != 0);
-            break;
-        case CV_MAKETYPE(CV_USRTYPE1,3):
-            indexParams->setAlgorithm((int) ip[i]["value"]);
-            break;
-        };
+            switch(type)
+            {
+            case CV_8U:
+            case CV_8S:
+            case CV_16U:
+            case CV_16S:
+            case CV_32S:
+                indexParams->setInt(_name, (int) ip[i]["value"]);
+                break;
+            case CV_32F:
+                indexParams->setFloat(_name, (float) ip[i]["value"]);
+                break;
+            case CV_64F:
+                indexParams->setDouble(_name, (double) ip[i]["value"]);
+                break;
+            case CV_USRTYPE1:
+                indexParams->setString(_name, (String) ip[i]["value"]);
+                break;
+            case CV_MAKETYPE(CV_USRTYPE1,2):
+                indexParams->setBool(_name, (int) ip[i]["value"] != 0);
+                break;
+            case CV_MAKETYPE(CV_USRTYPE1,3):
+                indexParams->setAlgorithm((int) ip[i]["value"]);
+                break;
+            };
+         }
      }
 
      if (!searchParams)
          searchParams = makePtr<flann::SearchParams>();
 
      FileNode sp = fn["searchParams"];
-     CV_Assert(sp.type() == FileNode::SEQ);
+     if(sp.type() != FileNode::NONE) {
+         CV_Assert(sp.type() == FileNode::SEQ);
 
-     for(int i = 0; i < (int)sp.size(); ++i)
-     {
-        CV_Assert(sp[i].type() == FileNode::MAP);
-        String _name =  (String)sp[i]["name"];
-        int type =  (int)sp[i]["type"];
+         for(int i = 0; i < (int)sp.size(); ++i)
+         {
+            CV_Assert(sp[i].type() == FileNode::MAP);
+            String _name =  (String)sp[i]["name"];
+            int type =  (int)sp[i]["type"];
 
-        switch(type)
-        {
-        case CV_8U:
-        case CV_8S:
-        case CV_16U:
-        case CV_16S:
-        case CV_32S:
-            searchParams->setInt(_name, (int) sp[i]["value"]);
-            break;
-        case CV_32F:
-            searchParams->setFloat(_name, (float) ip[i]["value"]);
-            break;
-        case CV_64F:
-            searchParams->setDouble(_name, (double) ip[i]["value"]);
-            break;
-        case CV_USRTYPE1:
-            searchParams->setString(_name, (String) ip[i]["value"]);
-            break;
-        case CV_MAKETYPE(CV_USRTYPE1,2):
-            searchParams->setBool(_name, (int) ip[i]["value"] != 0);
-            break;
-        case CV_MAKETYPE(CV_USRTYPE1,3):
-            searchParams->setAlgorithm((int) ip[i]["value"]);
-            break;
-        };
+            switch(type)
+            {
+            case CV_8U:
+            case CV_8S:
+            case CV_16U:
+            case CV_16S:
+            case CV_32S:
+                searchParams->setInt(_name, (int) sp[i]["value"]);
+                break;
+            case CV_32F:
+                searchParams->setFloat(_name, (float) ip[i]["value"]);
+                break;
+            case CV_64F:
+                searchParams->setDouble(_name, (double) ip[i]["value"]);
+                break;
+            case CV_USRTYPE1:
+                searchParams->setString(_name, (String) ip[i]["value"]);
+                break;
+            case CV_MAKETYPE(CV_USRTYPE1,2):
+                searchParams->setBool(_name, (int) ip[i]["value"] != 0);
+                break;
+            case CV_MAKETYPE(CV_USRTYPE1,3):
+                searchParams->setAlgorithm((int) ip[i]["value"]);
+                break;
+            };
+         }
      }
 
     flannIndex.release();
