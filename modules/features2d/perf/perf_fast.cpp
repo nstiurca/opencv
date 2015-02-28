@@ -20,7 +20,8 @@ typedef perf::TestBaseWithParam<File_Type_t> fast;
     "perf/outdoor_800x600.png",\
     "perf/outdoor_1280x1024.png",\
     "perf/indoor_752x480.png",\
-    "perf/indoor_1280x960.png"
+    "perf/indoor_1280x960.png",\
+    "perf/indoor_1288x964.png"
 
 PERF_TEST_P(fast, detect, testing::Combine(
                             testing::Values(FAST_IMAGES),

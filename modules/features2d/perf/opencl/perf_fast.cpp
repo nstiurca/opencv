@@ -20,7 +20,8 @@ typedef TestBaseWithParam<File_Type_t> FASTFixture;
     "perf/outdoor_800x600.png",\
     "perf/outdoor_1280x1024.png",\
     "perf/indoor_752x480.png",\
-    "perf/indoor_1280x960.png"
+    "perf/indoor_1280x960.png",\
+    "perf/indoor_1288x964.png"
 
 
 OCL_PERF_TEST_P(FASTFixture, FastDetect, testing::Combine(

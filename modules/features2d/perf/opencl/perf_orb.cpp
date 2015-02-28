@@ -16,7 +16,8 @@ typedef ::perf::TestBaseWithParam<std::string> ORBFixture;
     "perf/outdoor_800x600.png",\
     "perf/outdoor_1280x1024.png",\
     "perf/indoor_752x480.png",\
-    "perf/indoor_1280x960.png" )
+    "perf/indoor_1280x960.png",\
+    "perf/indoor_1288x964.png" )
 
 OCL_PERF_TEST_P(ORBFixture, ORB_Detect, ORB_IMAGES)
 {
