@@ -713,16 +713,16 @@ protected:
     int fastThreshold;
 };
 
-CV_INIT_ALGORITHM(ORB_Impl, "Feature2D.ORB",
-    obj.info()->addParam(obj, "nfeatures", obj.nfeatures);
-    obj.info()->addParam(obj, "scaleFactor", obj.scaleFactor);
-    obj.info()->addParam(obj, "nlevels", obj.nlevels);
-    obj.info()->addParam(obj, "edgeThreshold", obj.edgeThreshold);
-    obj.info()->addParam(obj, "firstLevel", obj.firstLevel);
-    obj.info()->addParam(obj, "WTA_K", obj.wta_k);
-    obj.info()->addParam(obj, "scoreType", obj.scoreType);
-    obj.info()->addParam(obj, "patchSize", obj.patchSize);
-    obj.info()->addParam(obj, "fastThreshold", obj.fastThreshold))
+CV_INIT_ALGORITHM(ORB_Impl, "Features2D.ORB",
+		obj.info()->addParam(obj, "nfeatures", obj.nfeatures);
+		obj.info()->addParam(obj, "scaleFactor", obj.scaleFactor);
+		obj.info()->addParam(obj, "nlevels", obj.nlevels);
+		obj.info()->addParam(obj, "edgeThreshold", obj.edgeThreshold);
+		obj.info()->addParam(obj, "firstLevel", obj.firstLevel);
+		obj.info()->addParam(obj, "wta_k", obj.wta_k);
+		obj.info()->addParam(obj, "scoreType", obj.scoreType);
+		obj.info()->addParam(obj, "patchSize", obj.patchSize);
+		obj.info()->addParam(obj, "fastThreshold", obj.fastThreshold))
 
 int ORB_Impl::descriptorSize() const
 {
