@@ -967,9 +967,6 @@ public:
     virtual bool isMaskSupported() const { return true; }
 
     virtual Ptr<DescriptorMatcher> clone( bool emptyTrainData=false ) const;
-
-    virtual AlgorithmInfo* info() const;
-
 protected:
     virtual void knnMatchImpl( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, int k,
         InputArrayOfArrays masks=noArray(), bool compactResult=false );
@@ -1006,8 +1003,6 @@ public:
     virtual bool isMaskSupported() const;
 
     virtual Ptr<DescriptorMatcher> clone( bool emptyTrainData=false ) const;
-
-    virtual cv::AlgorithmInfo* info() const;
 protected:
     static void convertToDMatches( const DescriptorCollection& descriptors,
                                    const Mat& indices, const Mat& distances,

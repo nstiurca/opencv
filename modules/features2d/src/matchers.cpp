@@ -669,10 +669,6 @@ bool DescriptorMatcher::isMaskedOut( InputArrayOfArrays _masks, int queryIdx )
 
 ////////////////////////////////////////////////////// BruteForceMatcher /////////////////////////////////////////////////
 
-CV_INIT_ALGORITHM(BFMatcher, "DescriptorMatcher.BruteForce",
-    obj.info()->addParam(obj, "normType", obj.normType);
-    obj.info()->addParam(obj, "crossCheck", obj.crossCheck))
-
 BFMatcher::BFMatcher( int _normType, bool _crossCheck )
 {
     normType = _normType;
@@ -969,18 +965,11 @@ void BFMatcher::radiusMatchImpl( InputArray _queryDescriptors, std::vector<std::
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CV_INIT_ALGORITHM(FlannBasedMatcher, "DescriptorMatcher.FlannBased", {} )
-
 /*
  * Factory function for DescriptorMatcher creating
  */
-Ptr<DescriptorMatcher> DescriptorMatcher::create( const String& descriptorMatcherType_ )
+Ptr<DescriptorMatcher> DescriptorMatcher::create( const String& descriptorMatcherType )
 {
-    const String prefix("DescriptorMatcher.");      // optional prefix
-    const String &descriptorMatcherType = descriptorMatcherType_.find(prefix) == 0
-            ? descriptorMatcherType_.substr(prefix.length())
-            : descriptorMatcherType_;
-
     Ptr<DescriptorMatcher> dm;
     if( !descriptorMatcherType.compare( "FlannBased" ) )
     {
@@ -1172,7 +1161,6 @@ void FlannBasedMatcher::read( const FileNode& fn)
 
 void FlannBasedMatcher::write( FileStorage& fs) const
 {
-     fs << "name" << "DescriptorMatcher.FlannBased";
      fs << "indexParams" << "[";
 
      if (indexParams)

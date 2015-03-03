@@ -73,12 +73,6 @@ bool initModule_features2d()
     f = AKAZE::create();
     f->info();
 
-    BFMatcher bfm;
-    bfm.info();
-
-    FlannBasedMatcher fbm;
-    fbm.info();
-
     return true;
 }
 
