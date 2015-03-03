@@ -56,8 +56,8 @@ namespace cv
     class KAZE_Impl : public KAZE
     {
     public:
-        KAZE_Impl(bool _extended=false, bool _upright=false, float _threshold=0.001f, int _octaves=4,
-                   int _sublevels=4, int _diffusivity=KAZE::DIFF_PM_G2)
+        KAZE_Impl(bool _extended, bool _upright, float _threshold, int _octaves,
+                   int _sublevels, int _diffusivity)
         : extended(_extended)
         , upright(_upright)
         , threshold(_threshold)
@@ -170,8 +170,6 @@ namespace cv
             diffusivity = (int)fn["diffusivity"];
         }
 
-        virtual AlgorithmInfo* info() const;
-
         bool extended;
         bool upright;
         float threshold;
@@ -179,14 +177,6 @@ namespace cv
         int sublevels;
         int diffusivity;
     };
-
-    CV_INIT_ALGORITHM(KAZE_Impl, "Feature2D.KAZE",
-        obj.info()->addParam(obj, "extended", obj.extended);
-        obj.info()->addParam(obj, "upright", obj.upright);
-        obj.info()->addParam(obj, "threshold", obj.threshold);
-        obj.info()->addParam(obj, "octaves", obj.octaves);
-        obj.info()->addParam(obj, "sublevels", obj.sublevels);
-        obj.info()->addParam(obj, "diffusivity", obj.diffusivity))
 
     Ptr<KAZE> KAZE::create(bool extended, bool upright,
                             float threshold,

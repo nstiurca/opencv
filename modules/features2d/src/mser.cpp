@@ -83,7 +83,7 @@ public:
         int edgeBlurSize;
     };
 
-    explicit MSER_Impl(const Params& _params = Params()) : params(_params) {}
+    explicit MSER_Impl(const Params& _params) : params(_params) {}
 
     virtual ~MSER_Impl() {}
 
@@ -471,8 +471,6 @@ public:
         }
     }
 
-    virtual AlgorithmInfo* info() const;
-
     Mat tempsrc;
     vector<Pixel> pixbuf;
     vector<Pixel*> heapbuf;
@@ -480,22 +478,6 @@ public:
 
     Params params;
 };
-
-static const bool readOnly = true;
-static const bool readWrite = false;
-
-
-CV_INIT_ALGORITHM(MSER_Impl, "Feature2D.MSER",
-    obj.info()->addParam(obj, "delta", obj.params.delta, readWrite);
-    obj.info()->addParam(obj, "minArea", obj.params.minArea, readWrite);
-    obj.info()->addParam(obj, "maxArea", obj.params.maxArea, readWrite);
-    obj.info()->addParam(obj, "maxVariation", obj.params.maxVariation, readOnly);
-    obj.info()->addParam(obj, "minDiversity", obj.params.minDiversity, readOnly);
-    obj.info()->addParam(obj, "pass2Only", obj.params.pass2Only, readWrite);
-    obj.info()->addParam(obj, "maxEvolution", obj.params.maxEvolution, readOnly);
-    obj.info()->addParam(obj, "areaThreshold", obj.params.areaThreshold, readOnly);
-    obj.info()->addParam(obj, "minMargin", obj.params.minMargin, readOnly);
-    obj.info()->addParam(obj, "edgeBlurSize", obj.params.edgeBlurSize, readOnly))
 
 /*
 

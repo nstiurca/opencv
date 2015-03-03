@@ -317,6 +317,8 @@ public:
 
     CV_WRAP virtual void setFastThreshold(int fastThreshold) = 0;
     CV_WRAP virtual int getFastThreshold() const = 0;
+
+    CV_WRAP virtual AlgorithmInfo* info() const = 0;
 };
 
 /** @brief Maximally stable extremal region extractor. :

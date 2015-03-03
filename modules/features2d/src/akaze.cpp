@@ -53,8 +53,6 @@ http://www.robesafe.com/personal/pablo.alcantarilla/papers/Alcantarilla13bmvc.pd
 
 #include <iostream>
 
-
-
 namespace cv
 {
     using namespace std;
@@ -62,10 +60,8 @@ namespace cv
     class AKAZE_Impl : public AKAZE
     {
     public:
-        AKAZE_Impl(int _descriptor_type=AKAZE::DESCRIPTOR_MLDB,
-                int _descriptor_size = 0, int _descriptor_channels = 3,
-                float _threshold = 0.001f, int _octaves = 4,
-                int _sublevels = 4, int _diffusivity = KAZE::DIFF_PM_G2)
+        AKAZE_Impl(int _descriptor_type, int _descriptor_size, int _descriptor_channels,
+                 float _threshold, int _octaves, int _sublevels, int _diffusivity)
         : descriptor(_descriptor_type)
         , descriptor_channels(_descriptor_channels)
         , descriptor_size(_descriptor_size)
@@ -234,8 +230,6 @@ namespace cv
             diffusivity = (int)fn["diffusivity"];
         }
 
-        virtual AlgorithmInfo* info() const;
-
         int descriptor;
         int descriptor_channels;
         int descriptor_size;
@@ -244,16 +238,6 @@ namespace cv
         int sublevels;
         int diffusivity;
     };
-
-    CV_INIT_ALGORITHM(AKAZE_Impl, "Feature2D.AKAZE",
-        obj.info()->addParam(obj, "descriptor", obj.descriptor);
-        obj.info()->addParam(obj, "descriptor_channels", obj.descriptor_channels);
-        obj.info()->addParam(obj, "descriptor_size", obj.descriptor_size);
-        obj.info()->addParam(obj, "threshold", obj.threshold);
-        obj.info()->addParam(obj, "octaves", obj.octaves);
-        obj.info()->addParam(obj, "sublevels", obj.sublevels);
-        obj.info()->addParam(obj, "diffusivity", obj.diffusivity))
-
 
     Ptr<AKAZE> AKAZE::create(int descriptor_type,
                              int descriptor_size, int descriptor_channels,

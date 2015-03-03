@@ -47,9 +47,9 @@ namespace cv
 class GFTTDetector_Impl : public GFTTDetector
 {
 public:
-    GFTTDetector_Impl( int _nfeatures=1000, double _qualityLevel=0.01,
-            double _minDistance=1, int _blockSize=3,
-            bool _useHarrisDetector=false, double _k=0.04 )
+    GFTTDetector_Impl( int _nfeatures, double _qualityLevel,
+                      double _minDistance, int _blockSize,
+                      bool _useHarrisDetector, double _k )
         : nfeatures(_nfeatures), qualityLevel(_qualityLevel), minDistance(_minDistance),
         blockSize(_blockSize), useHarrisDetector(_useHarrisDetector), k(_k)
     {
@@ -106,8 +106,6 @@ public:
 
     }
 
-    virtual AlgorithmInfo* info() const;
-
     int nfeatures;
     double qualityLevel;
     double minDistance;
@@ -115,14 +113,6 @@ public:
     bool useHarrisDetector;
     double k;
 };
-
-CV_INIT_ALGORITHM(GFTTDetector_Impl, "Feature2D.GFTTDetector",
-    obj.info()->addParam(obj, "nfeatures", obj.nfeatures);
-    obj.info()->addParam(obj, "qualityLevel", obj.qualityLevel);
-    obj.info()->addParam(obj, "minDistance", obj.minDistance);
-    obj.info()->addParam(obj, "blockSize", obj.blockSize);
-    obj.info()->addParam(obj, "useHarrisDetector", obj.useHarrisDetector);
-    obj.info()->addParam(obj, "k", obj.k))
 
 
 Ptr<GFTTDetector> GFTTDetector::create( int _nfeatures, double _qualityLevel,
