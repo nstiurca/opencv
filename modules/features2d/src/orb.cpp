@@ -653,8 +653,8 @@ static inline float getScale(int level, int firstLevel, double scaleFactor)
 class ORB_Impl : public ORB
 {
 public:
-    explicit ORB_Impl(int _nfeatures=500, float _scaleFactor=1.2f, int _nlevels=8, int _edgeThreshold=31,
-            int _firstLevel=0, int _WTA_K=2, int _scoreType=ORB::HARRIS_SCORE, int _patchSize=31, int _fastThreshold=20) :
+    explicit ORB_Impl(int _nfeatures, float _scaleFactor, int _nlevels, int _edgeThreshold,
+             int _firstLevel, int _WTA_K, int _scoreType, int _patchSize, int _fastThreshold) :
         nfeatures(_nfeatures), scaleFactor(_scaleFactor), nlevels(_nlevels),
         edgeThreshold(_edgeThreshold), firstLevel(_firstLevel), wta_k(_WTA_K),
         scoreType(_scoreType), patchSize(_patchSize), fastThreshold(_fastThreshold)
@@ -698,8 +698,6 @@ public:
     void detectAndCompute( InputArray image, InputArray mask, std::vector<KeyPoint>& keypoints,
                      OutputArray descriptors, bool useProvidedKeypoints=false );
 
-    virtual AlgorithmInfo* info() const;
-
 protected:
 
     int nfeatures;
@@ -712,17 +710,6 @@ protected:
     int patchSize;
     int fastThreshold;
 };
-
-CV_INIT_ALGORITHM(ORB_Impl, "Features2D.ORB",
-		obj.info()->addParam(obj, "nfeatures", obj.nfeatures);
-		obj.info()->addParam(obj, "scaleFactor", obj.scaleFactor);
-		obj.info()->addParam(obj, "nlevels", obj.nlevels);
-		obj.info()->addParam(obj, "edgeThreshold", obj.edgeThreshold);
-		obj.info()->addParam(obj, "firstLevel", obj.firstLevel);
-		obj.info()->addParam(obj, "wta_k", obj.wta_k);
-		obj.info()->addParam(obj, "scoreType", obj.scoreType);
-		obj.info()->addParam(obj, "patchSize", obj.patchSize);
-		obj.info()->addParam(obj, "fastThreshold", obj.fastThreshold))
 
 int ORB_Impl::descriptorSize() const
 {

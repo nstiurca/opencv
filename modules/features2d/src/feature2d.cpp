@@ -45,14 +45,6 @@
 namespace cv
 {
 
-bool initModule_features2d()
-{
-  Ptr<ORB> orb = ORB::create();
-  orb->info();
-
-  return true;
-}
-
 using std::vector;
 
 Feature2D::~Feature2D() {}

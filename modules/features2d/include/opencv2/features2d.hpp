@@ -85,8 +85,6 @@ namespace cv
 //! @addtogroup features2d
 //! @{
 
-CV_EXPORTS bool initModule_features2d();
-
 // //! writes vector of keypoints to the file storage
 // CV_EXPORTS void write(FileStorage& fs, const String& name, const std::vector<KeyPoint>& keypoints);
 // //! reads vector of keypoints from the specified file storage node
@@ -317,8 +315,6 @@ public:
 
     CV_WRAP virtual void setFastThreshold(int fastThreshold) = 0;
     CV_WRAP virtual int getFastThreshold() const = 0;
-
-    CV_WRAP virtual AlgorithmInfo* info() const = 0;
 };
 
 /** @brief Maximally stable extremal region extractor. :
