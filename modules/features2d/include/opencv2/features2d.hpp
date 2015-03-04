@@ -305,32 +305,15 @@ public:
     CV_WRAP static Ptr<ORB> create(int nfeatures=500, float scaleFactor=1.2f, int nlevels=8, int edgeThreshold=31,
         int firstLevel=0, int WTA_K=2, int scoreType=ORB::HARRIS_SCORE, int patchSize=31, int fastThreshold=20);
 
-    CV_WRAP virtual void setMaxFeatures(int maxFeatures) = 0;
-    CV_WRAP virtual int getMaxFeatures() const = 0;
-
-    CV_WRAP virtual void setScaleFactor(double scaleFactor) = 0;
-    CV_WRAP virtual double getScaleFactor() const = 0;
-
-    CV_WRAP virtual void setNLevels(int nlevels) = 0;
-    CV_WRAP virtual int getNLevels() const = 0;
-
-    CV_WRAP virtual void setEdgeThreshold(int edgeThreshold) = 0;
-    CV_WRAP virtual int getEdgeThreshold() const = 0;
-
-    CV_WRAP virtual void setFirstLevel(int firstLevel) = 0;
-    CV_WRAP virtual int getFirstLevel() const = 0;
-
-    CV_WRAP virtual void setWTA_K(int wta_k) = 0;
-    CV_WRAP virtual int getWTA_K() const = 0;
-
-    CV_WRAP virtual void setScoreType(int scoreType) = 0;
-    CV_WRAP virtual int getScoreType() const = 0;
-
-    CV_WRAP virtual void setPatchSize(int patchSize) = 0;
-    CV_WRAP virtual int getPatchSize() const = 0;
-
-    CV_WRAP virtual void setFastThreshold(int fastThreshold) = 0;
-    CV_WRAP virtual int getFastThreshold() const = 0;
+    CV_PURE_PROPERTY(int, MaxFeatures)
+    CV_PURE_PROPERTY(double, ScaleFactor)
+    CV_PURE_PROPERTY(int, NLevels)
+    CV_PURE_PROPERTY(int, EdgeThreshold)
+    CV_PURE_PROPERTY(int, FirstLevel)
+    CV_PURE_PROPERTY(int, WTA_K)
+    CV_PURE_PROPERTY(int, ScoreType)
+    CV_PURE_PROPERTY(int, PatchSize)
+    CV_PURE_PROPERTY(int, FastThreshold)
 };
 
 /** @brief Maximally stable extremal region extractor. :

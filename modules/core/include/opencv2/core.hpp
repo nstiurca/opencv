@@ -2856,6 +2856,13 @@ public:
 #define CV_WRAP_SAME_PROPERTY(type, name, internal_obj) CV_WRAP_PROPERTY(type, name, name, internal_obj)
 #define CV_WRAP_SAME_PROPERTY_S(type, name, internal_obj) CV_WRAP_PROPERTY_S(type, name, name, internal_obj)
 
+// read/write properties from/to FileNode/FileStorage
+#define CV_FN_READ_PROPERTY(type, name) \
+    { const FileNode &fn2 = fn[ #name ]; \
+    if(!fn2.isNone()) set##name( (type) fn2); }
+
+#define CV_FS_WRITE_PROPERTY(name) fs << #name << get##name();
+
 struct Param {
     enum { INT=0, BOOLEAN=1, REAL=2, STRING=3, MAT=4, MAT_VECTOR=5, ALGORITHM=6, FLOAT=7,
            UNSIGNED_INT=8, UINT64=9, UCHAR=11 };

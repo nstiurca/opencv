@@ -660,32 +660,18 @@ public:
         scoreType(_scoreType), patchSize(_patchSize), fastThreshold(_fastThreshold)
     {}
 
-    void setMaxFeatures(int maxFeatures) { nfeatures = maxFeatures; }
-    int getMaxFeatures() const { return nfeatures; }
+    CV_IMPL_PROPERTY(int, MaxFeatures, nfeatures)
+    CV_IMPL_PROPERTY(double, ScaleFactor, scaleFactor)
+    CV_IMPL_PROPERTY(int, NLevels, nlevels)
+    CV_IMPL_PROPERTY(int, EdgeThreshold, edgeThreshold)
+    CV_IMPL_PROPERTY(int, FirstLevel, firstLevel)
+    CV_IMPL_PROPERTY(int, WTA_K, wta_k)
+    CV_IMPL_PROPERTY(int, ScoreType, scoreType)
+    CV_IMPL_PROPERTY(int, PatchSize, patchSize)
+    CV_IMPL_PROPERTY(int, FastThreshold, fastThreshold)
 
-    void setScaleFactor(double scaleFactor_) { scaleFactor = scaleFactor_; }
-    double getScaleFactor() const { return scaleFactor; }
-
-    void setNLevels(int nlevels_) { nlevels = nlevels_; }
-    int getNLevels() const { return nlevels; }
-
-    void setEdgeThreshold(int edgeThreshold_) { edgeThreshold = edgeThreshold_; }
-    int getEdgeThreshold() const { return edgeThreshold; }
-
-    void setFirstLevel(int firstLevel_) { firstLevel = firstLevel_; }
-    int getFirstLevel() const { return firstLevel; }
-
-    void setWTA_K(int wta_k_) { wta_k = wta_k_; }
-    int getWTA_K() const { return wta_k; }
-
-    void setScoreType(int scoreType_) { scoreType = scoreType_; }
-    int getScoreType() const { return scoreType; }
-
-    void setPatchSize(int patchSize_) { patchSize = patchSize_; }
-    int getPatchSize() const { return patchSize; }
-
-    void setFastThreshold(int fastThreshold_) { fastThreshold = fastThreshold_; }
-    int getFastThreshold() const { return fastThreshold; }
+    void read( const FileNode& fn);
+    void write( FileStorage& fs) const;
 
     // returns the descriptor size in bytes
     int descriptorSize() const;
@@ -710,6 +696,32 @@ protected:
     int patchSize;
     int fastThreshold;
 };
+
+void ORB_Impl::write( FileStorage& fs) const
+{
+    CV_FS_WRITE_PROPERTY(MaxFeatures);
+    CV_FS_WRITE_PROPERTY(ScaleFactor);
+    CV_FS_WRITE_PROPERTY(NLevels);
+    CV_FS_WRITE_PROPERTY(EdgeThreshold);
+    CV_FS_WRITE_PROPERTY(FirstLevel);
+    CV_FS_WRITE_PROPERTY(WTA_K);
+    CV_FS_WRITE_PROPERTY(ScoreType);
+    CV_FS_WRITE_PROPERTY(PatchSize);
+    CV_FS_WRITE_PROPERTY(FastThreshold);
+}
+
+void ORB_Impl::read( const FileNode& fn)
+{
+    CV_FN_READ_PROPERTY(int, MaxFeatures);
+    CV_FN_READ_PROPERTY(double, ScaleFactor);
+    CV_FN_READ_PROPERTY(int, NLevels);
+    CV_FN_READ_PROPERTY(int, EdgeThreshold);
+    CV_FN_READ_PROPERTY(int, FirstLevel);
+    CV_FN_READ_PROPERTY(int, WTA_K);
+    CV_FN_READ_PROPERTY(int, ScoreType);
+    CV_FN_READ_PROPERTY(int, PatchSize);
+    CV_FN_READ_PROPERTY(int, FastThreshold);
+}
 
 int ORB_Impl::descriptorSize() const
 {
