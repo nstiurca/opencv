@@ -198,6 +198,22 @@ public:
 
     //! Return true if detector object is empty
     CV_WRAP virtual bool empty() const;
+
+    /** @brief Creates a Feature2D of a given type with the default parameters (using
+     * the subclass's create() factory).
+
+    @param feature2dType Feature2d type. Now the following features are
+    supported:
+    -   `BRISK`
+    -   `ORB`
+    -   `MSER`
+    -   `FastFeatureDetector`
+    -   `GFTTDetector`
+    -   `SimpleBlobDetector`
+    -   `KAZE`
+    -   `AKAZE`
+     */
+    CV_WRAP static Ptr<Feature2D> create( const String& feature2dType );
 };
 
 /** Feature detectors in OpenCV have wrappers with a common interface that enables you to easily switch

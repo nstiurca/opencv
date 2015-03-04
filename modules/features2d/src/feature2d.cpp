@@ -165,5 +165,54 @@ bool Feature2D::empty() const
 {
     return true;
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*
+ * Factory function for Feature2D creating
+ */
+Ptr<Feature2D> Feature2D::create( const String& feature2dType_ )
+{
+    const String prefix("Feature2D.");
+    const String &feature2dType = feature2dType_.find(prefix) == 0
+            ? feature2dType_.substr(prefix.length()) :  feature2dType_;
+    Ptr<Feature2D> f2d;
+
+    if( !feature2dType.compare( "BRISK" ) )
+    {
+        f2d = BRISK::create();
+    }
+    else if( !feature2dType.compare( "ORB" ) )
+    {
+        f2d = ORB::create();
+    }
+    else if( !feature2dType.compare( "MSER" ) )
+    {
+        f2d = MSER::create();
+    }
+    else if( !feature2dType.compare( "FastFeatureDetector" ) )
+    {
+        f2d = FastFeatureDetector::create();
+    }
+    else if( !feature2dType.compare( "GFTTDetector" ) )
+    {
+        f2d = GFTTDetector::create();
+    }
+    else if( !feature2dType.compare( "SimpleBlobDetector" ) )
+    {
+        f2d = SimpleBlobDetector::create();
+    }
+    else if( !feature2dType.compare( "KAZE" ) )
+    {
+        f2d = KAZE::create();
+    }
+    else if( !feature2dType.compare( "AKAZE" ) )
+    {
+        f2d = AKAZE::create();
+    }
+    else
+        CV_Error( Error::StsBadArg, "Unknown Feature2D name" );
+
+    return f2d;
+}
 
 }
