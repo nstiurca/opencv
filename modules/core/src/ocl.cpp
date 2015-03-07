@@ -4889,6 +4889,7 @@ public:
 
         CV_Assert( u->handle != 0 );
         cl_command_queue q = (cl_command_queue)Queue::getDefault().ptr();
+        CV_Assert(NULL != q);
 
 #ifdef HAVE_OPENCL_SVM
         if ((u->allocatorFlags_ & svm::OPENCL_SVM_BUFFER_MASK) != 0)
@@ -4953,8 +4954,12 @@ public:
             AlignedDataPtr<true, false> alignedPtr((uchar*)srcptr, sz[0] * srcstep[0], CV_OPENCL_DATA_PTR_ALIGNMENT);
             if( iscontinuous )
             {
-                CV_Assert( clEnqueueWriteBuffer(q, (cl_mem)u->handle,
-                    CL_TRUE, dstrawofs, total, alignedPtr.getAlignedPtr(), 0, 0, 0) >= 0 );
+                cl_int status = clEnqueueWriteBuffer(q, (cl_mem)u->handle,
+                    CL_TRUE, dstrawofs, total, alignedPtr.getAlignedPtr(), 0, 0, 0);
+                if(CL_SUCCESS != status) {
+                    std::cerr << "OpenCL status: " << status << std::endl;
+                }
+                CV_Assert(status >= 0);
             }
             else
             {
